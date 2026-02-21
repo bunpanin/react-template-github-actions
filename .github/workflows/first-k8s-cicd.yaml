@@ -1,17 +1,21 @@
-# set condition for when to run the action files 
-on: 
-  push: 
-    branches: ["main"]
-# build docker image , push dockerhub
-jobs: 
-  ci-job: 
-    runs-on: ubuntu-latest 
-    steps: 
-      - name: Checkout code 
+name: CI Pipeline
+# Trigger when pushing to master branch
+on:
+  push:
+    branches:
+      - main
+jobs:
+  ci-job:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️. Checkout repository code
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Using Commit SHA 
-        run: |
-          echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
-      - name: Show the SHA values 
-        run: |
-          echo "TAG = ${{env.TAG }}"
+
+      # 2️. Set short commit SHA as Docker tag
+      - name: Set short commit SHA
+        run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+
+      # 3. Show SHA value
+      - name: Show the SHA value
+        run: echo "TAG = ${{ env.TAG }}"
