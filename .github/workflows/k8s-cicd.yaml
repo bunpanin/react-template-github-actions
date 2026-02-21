@@ -14,4 +14,4 @@ jobs:
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
       - name: Show the SHA values
         run: |
-          echo "Tag = ${env.TAG}"
+          echo "Tag = ${{env.TAG}}"
