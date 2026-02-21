@@ -4,18 +4,32 @@ on:
   push:
     branches:
       - main
+env:
+  DOCKER_IMAGE_NAME:  k8s-react-template
 jobs:
   ci-job:
     runs-on: ubuntu-latest
+    environment: DOCKER_ENV
     steps:
-      # 1️. Checkout repository code
+
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2️. Set short commit SHA as Docker tag
       - name: Set short commit SHA
         run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
 
-      # 3. Show SHA value
       - name: Show the SHA value
         run: echo "TAG = ${{ env.TAG }}"
+      - name: Login to Dockerhub
+        run: |
+          echo "${{ secrets.PASSWORD }}" | docker login -u ${{ secrets.USERNAME }} --password-stdin
+      - name: Build and tag
+        run:
+          docker build -t ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }} .
+      - name: Push to Dockerhub
+        run:
+          docker push ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}
+      - name: Logout from Dockerhub
+        if: always()
+        run: |
+          docker logout
