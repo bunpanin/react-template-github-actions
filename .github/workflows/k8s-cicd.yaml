@@ -1,17 +1,17 @@
-# set condition for when to run the action files
-on:
-  push:
-    branches: ['master']
+# set condition for when to run the action files 
+on: 
+  push: 
+    branches: ["master"]
 # build docker image , push dockerhub
-jobs:
-  ci-job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: action/checkout@v3
-      - name: Using Commit SHA
+jobs: 
+  ci-job: 
+    runs-on: ubuntu-latest 
+    steps: 
+      - name: Checkout code 
+        uses: actions/checkout@v3
+      - name: Using Commit SHA 
         run: |
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
-      - name: Show the SHA values
+      - name: Show the SHA values 
         run: |
-          echo "Tag = ${{env.TAG}}"
+          echo "TAG = ${{env.TAG }}"
