@@ -69,3 +69,4 @@ jobs:
           rm -rf helm_repo
 
 # cd 4
+# cd 6
