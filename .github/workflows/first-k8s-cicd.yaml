@@ -56,7 +56,7 @@ jobs:
           yq -i ".image.tag=\"${{ env.TAG }}"\" values.yaml
 
           echo "Update port"
-          yq -i '.service.port = 8080' values.yaml
+          yq -i '.service.port = 80' values.yaml
 
           git config --global user.email "username@example.com"
           git config --global user.name "dummyname"
