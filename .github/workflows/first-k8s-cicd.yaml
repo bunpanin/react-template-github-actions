@@ -50,10 +50,13 @@ jobs:
         run: |
           cd helm_repo/plainting-chart
           echo "Update repository username/imagename"
-          yq -i ".image.repository=\"${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME}}\"" values.yaml
+          yq -i ".image.repository=\"${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}\"" values.yaml
 
           echo "update image tag"
           yq -i ".image.tag=\"${{ env.TAG }}"\" values.yaml
+
+          echo "Update port"
+          yq -i '.service.port = 8080' values.yaml
 
           git config --global user.email "username@example.com"
           git config --global user.name "dummyname"
