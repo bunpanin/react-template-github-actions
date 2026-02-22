@@ -48,7 +48,7 @@ jobs:
           git clone https://github.com/${{ env.HELM_REPO }} helm_repo
       - name: Update helm chart
         run: |
-          cd helm_repo/plainting-
+          cd helm_repo/plainting-chart
           echo "Update repository username/imagename"
           yq -i ".image.repository=\"${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME}}\"" values.yaml
 
