@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
       - name: Clone argocd repo
-        run: | 
+        run: |
           git clone https://github.com/${{ env.HELM_REPO }} helm_repo
       - name: Update helm chart
         run: |
@@ -59,6 +59,8 @@ jobs:
           git config --global user.name "dummyname"
           git add . 
           git commit -m "features: using github-action update helm image ${{ env.TAG }}"
+          git push https://${{ secrets.GIT_TOKEN }}@github.com/${{ env.HELM_REPO }}
+
       - name: Clean up
         run: |
           rm -rf helm_repo
