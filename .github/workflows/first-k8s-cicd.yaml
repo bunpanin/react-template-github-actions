@@ -6,18 +6,16 @@ on:
       - main
 env:
   DOCKER_IMAGE_NAME:  k8s-react-template
+  HELM_REPO: bunpanin/playaround-helms-argocd-repo
 jobs:
   ci-job:
     runs-on: ubuntu-latest
     environment: DOCKER_ENV
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set short commit SHA
         run: echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
-
       - name: Show the SHA value
         run: echo "TAG = ${{ env.TAG }}"
       - name: Login to Dockerhub
@@ -33,3 +31,34 @@ jobs:
         if: always()
         run: |
           docker logout
+  cd-job:
+    needs: ci-job
+    runs-on: ubuntu-latest
+    environment: HELM_ENV
+    steps:
+      - name: Install yq command 
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+      - name: Add Commit SHA to TAG env 
+        run: |
+          echo "TAG=${GITHUB_SHA::8}" >> $GITHUB_ENV
+      - name: Clone argocd repo
+        run: | 
+          git clone https://github.com/${{ env.HELM_REPO }} helm_repo
+      - name: Update helm chart
+        run: |
+          cd helm_repo/plainting-
+          echo "Update repository username/imagename"
+          yq -i ".image.repository=\"${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME}}\"" values.yaml
+
+          echo "update image tag"
+          yq -i ".image.tag=\"${{ env.TAG }}"\" values.yaml
+
+          git config --global user.email "username@example.com"
+          git config --global user.name "dummyname"
+          git add . 
+          git commit -m "features: using github-action update helm image ${{ env.TAG }}"
+      - name: Clean up
+        run: |
+          rm -rf helm_repo
