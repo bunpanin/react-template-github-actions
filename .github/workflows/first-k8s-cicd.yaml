@@ -5,7 +5,7 @@ on:
     branches:
       - main
 env:
-  DOCKER_IMAGE_NAME:  k8s-react-template
+  DOCKER_IMAGE_NAME: k8s-react-template
   HELM_REPO: bunpanin/playaround-helms-argocd-repo
 jobs:
   ci-job:
@@ -23,8 +23,10 @@ jobs:
           echo "${{ secrets.PASSWORD }}" | docker login -u ${{ secrets.USERNAME }} --password-stdin
       - name: Build and tag
         run:
-          # docker build -t ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }} .
-          docker build --no-cache -t ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }} .
+          docker build -t ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }} .
+      - name: Build and Tag 
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{env.TAG }} .
       - name: Push to Dockerhub
         run:
           docker push ${{ secrets.USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.TAG }}
@@ -55,9 +57,6 @@ jobs:
 
           echo "update image tag"
           yq -i ".image.tag=\"${{ env.TAG }}"\" values.yaml
-
-          echo "Update port"
-          yq -i '.service.port = 80' values.yaml
 
           git config --global user.email "username@example.com"
           git config --global user.name "dummyname"
